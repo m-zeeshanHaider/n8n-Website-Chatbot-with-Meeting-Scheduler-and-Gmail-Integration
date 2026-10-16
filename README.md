@@ -10,6 +10,8 @@ Website visitors send messages through an n8n chat interface. An AI agent replie
 
 When a visitor wants a consultation, the agent collects the booking details, checks the calendar for conflicts, and creates a Google Calendar event with a Google Meet link. The system consists of one workflow.
 
+![n8n canvas showing a chat trigger connected to an AI Agent node, with a chat model, window buffer memory, two Google Calendar tools, and a Gmail tool attached to the agent](images/n8n-Website-Chatbot-with-Meeting-Scheduler-and-Gmail-Integration-1.png)
+
 ## Workflows
 
 | Workflow | Trigger | Purpose |
@@ -23,8 +25,6 @@ When a visitor wants a consultation, the agent collects the booking details, che
 This workflow turns each incoming chat message into an AI agent response, with calendar and email actions available as tools.
 
 **Trigger:** The **Chat Trigger** node, named "When chat message received", starts the workflow when a visitor sends a message. It runs in public webhook mode and retries on failure after a 3 second wait.
-
-![n8n canvas showing a chat trigger connected to an AI Agent node, with a chat model, window buffer memory, two Google Calendar tools, and a Gmail tool attached to the agent](images/n8n-Website-Chatbot-with-Meeting-Scheduler-and-Gmail-Integration-1.png)
 
 Execution steps:
 
