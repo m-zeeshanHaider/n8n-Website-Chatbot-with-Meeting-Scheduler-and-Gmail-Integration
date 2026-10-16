@@ -1,0 +1,293 @@
+{
+  "name": "Website Chatbot with Meeting Scheduler & Gmail Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {}
+      },
+      "id": "736189d6-a3c0-41e1-abcd-5a282f35fc43",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        736,
+        496
+      ],
+      "webhookId": "ffcf29b6-19e9-40fd-81a6-132910560043",
+      "typeVersion": 1.1,
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "id": "6a1e8aa4-40b5-4d25-a6de-85dad4310f3a",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        1104,
+        720
+      ],
+      "typeVersion": 1.2,
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a helpful, intelligent website chatbot for ErrorCode:Z, a mobile app and AI development agency. You're female and your name is Liza. The current date is {{ $now.format('DDDD') }}. You are in the Asia/Karachi timezone.\n\n### Context about the business:\n- We specialize in Flutter mobile app development, n8n workflow automation, and AI agent development.\n- We build fast, cross-platform apps with Flutter, automate business processes with n8n, and create smart, custom AI solutions.\n- Our work has been recognized for its clean code and innovative use of automation.\n- We've delivered projects for startups and established companies across the world.\n- Our team is composed of senior developers and automation specialists.\n\n### Instructions:\nMandatory 1st Step: Get the schedule of meetings using the **Calendar Tool** for your reference (Do not mention to the user).\n\nAs the website chatbot, your main job is to answer questions about our services and then book a meeting for a consultation.\n\nIf the user wish to book a meeting. Gather necessary information from the user in a friendly way. You must:\n1.  Ask for the first name.\n2.  Ask for the email address (a Google Meet link will be sent here).\n3.  Request the preferred date and time for the meeting.\n4.  Confirm all the details with the user before finalizing.\n\n### Rules:\n- Be kind of funny and witty! A little sarcasm is okay.\n- You MUST always check if a requested time slot is available using the **Calendar Tool**.\n- Meetings can only be booked between today and the next 7 days (the current week) excluding Sunday. You must politely decline any request for a date beyond this one-week window.\n- If the time slot is already booked, you cannot book it again. Instead, you must immediately suggest 2-3 alternative available time slots (priority for the next two days).\n- Always remember you're in the Asia/Karachi timezone, so reaffirm this when discussing times.\n- Keep all your responses short and simple. Use casual language like \"Hmm...\", \"Okay, so...\", or \"Awesome!\".\n- This is a chat, so keep it snappy. Pretend it's SMS. No long paragraphs.\n- If someone tries to derail the conversation or try to use you for something else, politely steer them back to talking about ErrorCode:Z or booking a meeting."
+        }
+      },
+      "id": "539f54ee-44d1-4037-82ac-51903925d1da",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1216,
+        496
+      ],
+      "typeVersion": 1.7,
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "content": "# 🧠 **AI-Powered Website Chatbot with Meeting Scheduler & Gmail Integration**\n\nThis is an autonomous AI agent that acts as a website chatbot. It handles conversations and can book meetings by interacting with your calendar and email.\n\n---\n\n### 🔗 **Node Connections & Flow**\n\n**1. When chat message received (Webhook Trigger)**\n*   **Purpose:** The workflow's entry point. It listens for incoming messages from the website chat interface.\n*   **Output:** Passes the user's message and conversation ID to the AI Agent.\n\n**2. OpenAI Chat Model (Language Model)**\n*   **Purpose:** Provides the AI \"brain\" for the agent. This model processes the user's input and the agent's instructions to generate intelligent, contextual responses.\n*   **Connection:** Injected into the AI Agent as its core reasoning engine.\n\n**3. Window Buffer Memory (Memory)**\n*   **Purpose:** Provides short-term memory for the conversation. It remembers the last `X` messages, allowing the AI to have context on what was previously discussed.\n*   **Connection:** Injected into the AI Agent, giving it access to past interaction history.\n\n**4. AI Agent (Agent)**\n*   **Purpose:** The central logic unit. It decides how to respond to the user. Based on the conversation and its predefined goal (answer questions & book meetings), it can choose to:\n    *   Just reply using the language model.\n    *   Use one of its connected **tools** (below) to perform an action.\n*   **System Prompt:** Contains the agent's personality, rules, and primary objectives. It is instructed to be witty, collect specific info for meetings, and use the calendar tools.\n\n**5. Get many events in Google Calendar (Tool)**\n*   **Purpose:** A tool the AI Agent can call. It fetches existing events from a specified calendar within a given time range.\n*   **When used:** The AI uses this to check the availability of requested meeting times or to find free slots to suggest alternatives.\n\n**6. Create an event in Google Calendar (Tool)**\n*   **Purpose:** A tool the AI Agent can call. It creates a new calendar event.\n*   **When used:** After the AI has collected the user's name, email, and preferred time (and verified it's available), it uses this tool to officially book the meeting. It populates the event with details like title, time, and attendees.\n\n**7. Send a message in Gmail (Tool)**\n*   **Purpose:** A tool the AI Agent can call. It sends an email via Gmail.\n*   **When used:** To send a meeting confirmation or summary email to the user after a successful booking. The AI dynamically generates the recipient, subject, and body.\n\n---\n\n### ⚙️ **How It Works (Step-by-Step)**\n1.  A user sends a message on the website chat.\n2.  The webhook trigger activates the workflow.\n3.  The **AI Agent** receives the message and checks the **Memory** for context.\n4.  The Agent uses the **Language Model** to decide on the best action based on its instructions.\n5.  If the user asks about booking a meeting, the Agent guides the conversation to collect necessary details (name, email, time).\n6.  To check availability, the Agent uses the **'Get many events'** tool.\n7.  If the time is free, the Agent uses the **'Create an event'** tool to book it.\n8.  Finally, the Agent may use the **'Send a message'** tool to email a confirmation.\n9.  The Agent sends its final chat response back to the user through the webhook.\n10. The **Memory** is updated with this entire interaction for the next message.",
+        "height": 1248,
+        "width": 720,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "4607a17c-4528-4394-b79a-d4bf25f22004",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        912,
+        720
+      ],
+      "id": "04495fbe-540d-4190-abbc-20003c781fc4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "oaOoORThgJG8STJp",
+          "name": "Dev _ Sasha Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "c5384d21b86014119986e80ac60158988e7bd7a5fc9795c19ca3da32e9e8f26d@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Business calender"
+        },
+        "limit": 10,
+        "options": {
+          "timeMin": "={{ $fromAI(\"afterDate\") }}",
+          "timeMax": "={{ $fromAI(\"beforeDate\") }}",
+          "timeZone": {
+            "__rl": true,
+            "value": "Asia/Karachi",
+            "mode": "list",
+            "cachedResultName": "Asia/Karachi"
+          }
+        }
+      },
+      "id": "113f1e15-79d6-46d9-9e0a-76c43fd521ad",
+      "name": "Get info from Google Calendar",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1296,
+        720
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "tqOmYALdqIdCisJM",
+          "name": "Dev _ n8n Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "c5384d21b86014119986e80ac60158988e7bd7a5fc9795c19ca3da32e9e8f26d@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Business calender"
+        },
+        "start": "={{ $fromAI(\"startDate\") }}",
+        "end": "={{ $fromAI(\"endDate\") }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $fromAI(\"userEmailAddress\") }}",
+            "sashalegendtest112@gmail.com"
+          ],
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolution": "hangoutsMeet"
+            }
+          },
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "showMeAs": "opaque",
+          "summary": "={{ $fromAI(\"meetingSummary\") }}"
+        }
+      },
+      "id": "95ca385e-a316-46b1-85a1-064d94c2ebf0",
+      "name": "Create meeting schedule in Google Calendar",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        1504,
+        720
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "tqOmYALdqIdCisJM",
+          "name": "Dev _ n8n Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1696,
+        720
+      ],
+      "id": "77db7665-a6b3-4d91-bca0-348d1181d580",
+      "name": "Send message in Gmail",
+      "webhookId": "d5d1caa1-ef28-456c-9f3c-553380ce369c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yXNew9CtXecgo4p7",
+          "name": "Dev _ Sasha Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get info from Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create meeting schedule in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "Vsyj4lPuDw5RGiAq",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "44da7324-424c-4d8d-bc56-b5a1911a2746",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5c585f2620b1e811fa88e890c331ab057400f88adebd1d8bd64feeac19ecaec8"
+  },
+  "nodeGroups": [],
+  "id": "uG9OVwWLnZkFxdy0",
+  "tags": [
+    {
+      "updatedAt": "2026-05-29T13:32:11.906Z",
+      "createdAt": "2026-05-29T13:32:11.906Z",
+      "id": "PxKxaRZC17gArkXW",
+      "name": "Chatbot"
+    },
+    {
+      "updatedAt": "2026-08-07T10:30:45.435Z",
+      "createdAt": "2026-05-16T12:55:37.724Z",
+      "id": "uSNTXipxQbvF4Txs",
+      "name": "Main Workflow"
+    }
+  ]
+}
