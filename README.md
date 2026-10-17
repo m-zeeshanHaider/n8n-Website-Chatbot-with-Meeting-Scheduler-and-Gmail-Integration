@@ -45,8 +45,6 @@ Branching logic, which the agent applies through its system prompt:
 - A date more than 7 days ahead, or a Sunday, is declined.
 - A message unrelated to the agency or to booking is redirected to those topics.
 
-The workflow contains no loops and no sub-workflow calls. An error workflow is configured in the workflow settings.
-
 Agent behavior defined in the system prompt:
 
 - The agent uses a witty, casual tone with short, SMS-style messages.
